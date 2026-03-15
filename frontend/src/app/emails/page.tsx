@@ -1,15 +1,20 @@
 'use client';
 
 import AppShell from '@/components/Navbar';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-const DEMO_EMAILS = [
-  { id: 1, status: 'Critical', sender: 'unknown@suspicious-domain.xyz', recipient: 'ceo@company.com', subject: 'URGENT: Wire Transfer Req...', score: 95, time: '3/14/2026, 11:30' },
-  { id: 2, status: 'Warning', sender: 'john.smith@company.com', recipient: 'finance@external-corp.com', subject: 'Q4 Financial Report – URG...', score: 78, time: '3/14/2026, 11:00' },
-  { id: 3, status: 'Warning', sender: 'vendor@supplier.com', recipient: 'procurement@company.com', subject: 'Invoice #12345', score: 45, time: '3/14/2026, 10:30' },
-  { id: 4, status: 'Safe', sender: 'sarah.jones@company.com', recipient: 'hr@company.com', subject: 'Team Meeting Notes', score: 12, time: '3/14/2026, 10:00' },
-  { id: 5, status: 'Safe', sender: 'marketing@company.com', recipient: 'team@company.com', subject: 'New Campaign Assets', score: 8, time: '3/14/2026, 9:00' },
-];
+type EmailData = {
+  id: number;
+  status: string;
+  sender: string;
+  recipient: string;
+  subject: string;
+  score: number;
+  time: string;
+};
+
+// Fallback demo data if fetch fails
+const DEMO_EMAILS: EmailData[] = [];
 
 function getStatusStyle(status: string) {
   switch (status) {
@@ -27,14 +32,41 @@ function getScoreColor(score: number) {
 }
 
 export default function EmailHistoryPage() {
+  const [emails, setEmails] = useState<EmailData[]>(DEMO_EMAILS);
   const [statusFilter, setStatusFilter] = useState('all');
   const [search, setSearch] = useState('');
 
-  const safeCount = DEMO_EMAILS.filter(e => e.status === 'Safe').length;
-  const warnCount = DEMO_EMAILS.filter(e => e.status === 'Warning').length;
-  const critCount = DEMO_EMAILS.filter(e => e.status === 'Critical').length;
+  useEffect(() => {
+    fetch('/api/emails')
+      .then(res => res.json())
+      .then((data: any[]) => {
+        const mapped = data.map(d => {
+          let st = 'Safe';
+          let sc = 10;
+          if (d.status === 'BLOCKED') { st = 'Critical'; sc = 90; }
+          else if (d.status === 'STRONG_WARNING') { st = 'Critical'; sc = 75; }
+          else if (d.status === 'WARNED') { st = 'Warning'; sc = 50; }
+          
+          return {
+            id: d.id,
+            status: st,
+            sender: d.sender,
+            recipient: d.recipients,
+            subject: d.subject || 'No Subject',
+            score: sc,
+            time: d.createdAt ? new Date(d.createdAt).toLocaleString() : new Date().toLocaleString()
+          };
+        });
+        setEmails(mapped);
+      })
+      .catch(err => console.error('Error fetching emails:', err));
+  }, []);
 
-  const filtered = DEMO_EMAILS.filter(e => {
+  const safeCount = emails.filter(e => e.status === 'Safe').length;
+  const warnCount = emails.filter(e => e.status === 'Warning').length;
+  const critCount = emails.filter(e => e.status === 'Critical').length;
+
+  const filtered = emails.filter(e => {
     if (statusFilter !== 'all' && e.status !== statusFilter) return false;
     if (search && !`${e.sender} ${e.recipient} ${e.subject}`.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
@@ -51,7 +83,7 @@ export default function EmailHistoryPage() {
         {/* Stats Row */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
           {[
-            { label: 'Total Emails', value: DEMO_EMAILS.length, color: '#111827' },
+            { label: 'Total Emails', value: emails.length, color: '#111827' },
             { label: 'Safe', value: safeCount, color: '#059669' },
             { label: 'Warning', value: warnCount, color: '#D97706' },
             { label: 'Critical', value: critCount, color: '#DC2626' },

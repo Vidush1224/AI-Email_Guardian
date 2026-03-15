@@ -141,6 +141,38 @@ function DonutChart() {
 
 /* ── Dashboard Page ── */
 export default function DashboardPage() {
+  const [statsData, setStatsData] = useState(STATS);
+
+  useEffect(() => {
+    fetch('/api/dashboard/stats')
+      .then(res => res.json())
+      .then(data => {
+        setStatsData([
+          { 
+            label: 'Total Emails Scanned', 
+            value: data.totalEmails ? data.totalEmails.toLocaleString() : '0', 
+            icon: '📧', trend: '+12% from last week', trendColor: '#059669', bg: '#F3F4F6', iconBg: '#DBEAFE' 
+          },
+          { 
+            label: 'Blocked Emails', 
+            value: data.blockedEmails ? data.blockedEmails.toLocaleString() : '0', 
+            icon: '🚫', trend: '-8% from last week', trendColor: '#DC2626', bg: '#F3F4F6', iconBg: '#FEE2E2' 
+          },
+          { 
+            label: 'Fraud Attempts', 
+            value: data.criticalIncidents ? data.criticalIncidents.toLocaleString() : '0', 
+            icon: '⚠️', trend: '+5 new today', trendColor: '#D97706', bg: '#F3F4F6', iconBg: '#FEF3C7' 
+          },
+          { 
+            label: 'Data Leaks Prevented', 
+            value: data.incidentsByType?.DATA_LEAK ? data.incidentsByType.DATA_LEAK.toLocaleString() : '0', 
+            icon: '🔒', trend: 'Protected this month', trendColor: '#059669', bg: '#F3F4F6', iconBg: '#D1FAE5' 
+          },
+        ]);
+      })
+      .catch(err => console.error('Failed to fetch stats:', err));
+  }, []);
+
   return (
     <AppShell>
       <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -152,7 +184,7 @@ export default function DashboardPage() {
 
         {/* Stats Cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-          {STATS.map((s, i) => (
+          {statsData.map((s, i) => (
             <div key={i} className="card" style={{ padding: '20px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
                 <div style={{ fontSize: 12, color: '#4B5563', marginBottom: 8 }}>{s.label}</div>
