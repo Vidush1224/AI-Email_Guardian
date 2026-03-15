@@ -64,7 +64,7 @@ public class DomainRiskAnalyzer {
         // 1. External domain detection
         if (!senderDomain.equalsIgnoreCase(companyDomain)) {
             signals.add("external_domain");
-            score += 15;
+            score += 30; // Requested: 30
             log.debug("[DOMAIN] External domain: {}", senderDomain);
         }
 
@@ -72,7 +72,7 @@ public class DomainRiskAnalyzer {
         for (String known : KNOWN_DOMAINS) {
             if (!senderDomain.equalsIgnoreCase(known) && isTyposquatting(senderDomain, known)) {
                 signals.add("typosquatting_domain");
-                score += 40;
+                score += 70; // Requested: 70
                 log.warn("[DOMAIN] Typosquatting detected: {} looks like {}", senderDomain, known);
                 break;
             }
@@ -84,8 +84,15 @@ public class DomainRiskAnalyzer {
             score += 35;
         }
 
-        // 3. Suspicious domain patterns
+        // 3. Suspicious domain patterns & TLDs
         String lowerDomain = senderDomain.toLowerCase();
+        
+        // Suspicious TLDs (Requested: .ru/.xyz -> 50)
+        if (lowerDomain.endsWith(".ru") || lowerDomain.endsWith(".xyz")) {
+            signals.add("suspicious_tld");
+            score += 50;
+        }
+
         for (String pattern : SUSPICIOUS_PATTERNS) {
             if (lowerDomain.contains(pattern)) {
                 signals.add("suspicious_domain_pattern");

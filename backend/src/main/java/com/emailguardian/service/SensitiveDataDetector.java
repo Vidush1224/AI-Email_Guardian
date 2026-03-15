@@ -53,8 +53,17 @@ public class SensitiveDataDetector {
             if (matcher.find()) {
                 String signalName = entry.getKey() + "_exposed";
                 signals.add(signalName);
-                score += 25;
-                log.debug("[SENSITIVE] Detected: {}", signalName);
+                
+                // Specific scores from request
+                double signalScore = switch(entry.getKey()) {
+                    case "ssn" -> 60;
+                    case "credit_card" -> 70;
+                    case "bank_account" -> 65;
+                    default -> 25;
+                };
+                
+                score += signalScore;
+                log.debug("[SENSITIVE] Detected: {} score={}", signalName, signalScore);
             }
         }
 

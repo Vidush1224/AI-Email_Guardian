@@ -75,7 +75,7 @@ public class AttachmentAnalyzer {
             // 3. Suspicious archives/disk images
             if (SUSPICIOUS_EXTENSIONS.contains(ext)) {
                 signals.add("suspicious_file_extension");
-                attachScore += 30;
+                attachScore += 40; // Requested: 40
             }
 
             // 4. MIME type mismatch

@@ -34,14 +34,13 @@ public class FraudRiskScoringEngine {
      * Calculate weighted aggregate risk score with factor breakdown.
      */
     public RiskScoreResult calculateScore(double phishingScore, double sensitiveDataScore,
-                                           double domainRiskScore, double attachmentRiskScore,
-                                           double metadataRiskScore) {
-        double totalScore =
-            (phishingScore * phishingWeight) +
-            (sensitiveDataScore * sensitiveDataWeight) +
-            (domainRiskScore * domainRiskWeight) +
-            (attachmentRiskScore * attachmentRiskWeight) +
-            (metadataRiskScore * metadataRiskWeight);
+            double domainRiskScore, double attachmentRiskScore,
+            double metadataRiskScore) {
+        double totalScore = (phishingScore * phishingWeight) +
+                (sensitiveDataScore * sensitiveDataWeight) +
+                (domainRiskScore * domainRiskWeight) +
+                (attachmentRiskScore * attachmentRiskWeight) +
+                (metadataRiskScore * metadataRiskWeight);
 
         // Cap between 0-100
         totalScore = Math.max(0, Math.min(100, totalScore));
@@ -54,15 +53,16 @@ public class FraudRiskScoringEngine {
         factors.put("metadata_risk", metadataRiskScore);
 
         log.info("[SCORING] Total={}, phishing={}, sensitive={}, domain={}, attachment={}, metadata={}",
-            String.format("%.1f", totalScore),
-            String.format("%.1f", phishingScore),
-            String.format("%.1f", sensitiveDataScore),
-            String.format("%.1f", domainRiskScore),
-            String.format("%.1f", attachmentRiskScore),
-            String.format("%.1f", metadataRiskScore));
+                String.format("%.1f", totalScore),
+                String.format("%.1f", phishingScore),
+                String.format("%.1f", sensitiveDataScore),
+                String.format("%.1f", domainRiskScore),
+                String.format("%.1f", attachmentRiskScore),
+                String.format("%.1f", metadataRiskScore));
 
         return new RiskScoreResult(totalScore, factors);
     }
 
-    public record RiskScoreResult(double totalScore, Map<String, Double> factors) {}
+    public record RiskScoreResult(double totalScore, Map<String, Double> factors) {
+    }
 }

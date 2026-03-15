@@ -17,11 +17,11 @@ public class DecisionEngine {
      */
     public FraudAnalysis.ActionType decide(double riskScore) {
         FraudAnalysis.ActionType action;
-        if (riskScore <= 30) {
+        if (riskScore <= 20) {
             action = FraudAnalysis.ActionType.ALLOW;
-        } else if (riskScore <= 60) {
+        } else if (riskScore <= 40) {
             action = FraudAnalysis.ActionType.WARN;
-        } else if (riskScore <= 80) {
+        } else if (riskScore <= 60) {
             action = FraudAnalysis.ActionType.STRONG_WARNING;
         } else {
             action = FraudAnalysis.ActionType.BLOCK;
