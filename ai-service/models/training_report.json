@@ -1,0 +1,103 @@
+{
+  "training_date": "2026-03-14T14:03:34.342892",
+  "dataset": "C:\\Users\\shala\\OneDrive\\Desktop\\AI fraud project\\ai-service\\data\\Phishing_Email.csv",
+  "best_model": "RandomForest",
+  "label_classes": [
+    "Phishing Email",
+    "Safe Email"
+  ],
+  "tfidf_features": 15000,
+  "custom_features": [
+    "text_length",
+    "word_count",
+    "avg_word_length",
+    "urgency_count",
+    "financial_count",
+    "credential_count",
+    "social_engineering_count",
+    "url_count",
+    "email_count",
+    "exclamation_count",
+    "caps_ratio",
+    "dollar_amount_count",
+    "has_click_here",
+    "has_verify_identity",
+    "has_password",
+    "has_crypto_giftcard",
+    "sentence_count"
+  ],
+  "results": {
+    "RandomForest": {
+      "accuracy": 0.9734733351754629,
+      "f1_weighted": 0.9735469511925872,
+      "precision_weighted": 0.9739202358849095,
+      "recall_weighted": 0.9734733351754629,
+      "cv_f1_mean": 0.9680640120633602,
+      "cv_f1_std": 0.0024682293885099488,
+      "confusion_matrix": [
+        [
+          1368,
+          26
+        ],
+        [
+          70,
+          2155
+        ]
+      ]
+    },
+    "LogisticRegression": {
+      "accuracy": 0.9372754904669798,
+      "f1_weighted": 0.9372543432782523,
+      "precision_weighted": 0.9372369498898983,
+      "recall_weighted": 0.9372754904669798,
+      "cv_f1_mean": 0.9243166267820344,
+      "cv_f1_std": 0.009637606050711515,
+      "confusion_matrix": [
+        [
+          1278,
+          116
+        ],
+        [
+          111,
+          2114
+        ]
+      ]
+    },
+    "LinearSVM": {
+      "accuracy": 0.44984802431610943,
+      "f1_weighted": 0.34206281624094453,
+      "precision_weighted": 0.7708129411158622,
+      "recall_weighted": 0.44984802431610943,
+      "cv_f1_mean": 0.5378260868359007,
+      "cv_f1_std": 0.15099110996335877,
+      "confusion_matrix": [
+        [
+          1393,
+          1
+        ],
+        [
+          1990,
+          235
+        ]
+      ]
+    },
+    "GradientBoosting": {
+      "accuracy": 0.9687759049461178,
+      "f1_weighted": 0.9687653779314648,
+      "precision_weighted": 0.9687587462133935,
+      "recall_weighted": 0.9687759049461178,
+      "cv_f1_mean": 0.9677991891128043,
+      "cv_f1_std": 0.0015165129093972027,
+      "confusion_matrix": [
+        [
+          1335,
+          59
+        ],
+        [
+          54,
+          2171
+        ]
+      ]
+    }
+  }
+}
